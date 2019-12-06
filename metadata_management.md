@@ -1,7 +1,17 @@
 # Management of Metadata for Project
 
 ## Get JGI sequencing info
-
+* Tables are saved in this google Sheet
+  * `https://docs.google.com/spreadsheets/d/1ARXuObWDpaJwKm2KNPXpso9qMpAfQFvml2cQ_G0fkIk/edit?usp=sharing`
+### Steps
+* Manually inputted Experiment info from Chaofu's info sheet as "Sample Info"
+* Processed the JGI Library Sequencing data using R
+* Combined the Sample and Sequencing info into single table
+  * need to upload this to NERSC
+### Process files
+* In R
+* I did all this on my PC because Cori was down for maintenance
+  * all generated tables are saved in the Google Sheet noted above
 ```
 lib_file <- 'Camelina_JGI_Lib_info.txt'
 lib_info <- read.table(lib_file, header = F, stringsAsFactors = F, sep = '\t')
@@ -29,4 +39,36 @@ lib_df <- data.frame(lib_name = unlist(lapply(lib_list_2, function(x) x[1])),
   ratioStrandedness = as.numeric(unlist(lapply(lib_list_2, function(x) x[8]))),
   stringsAsFactors = F
 )
+
+lib_info_out <- 'CamSat_transcript_info.txt'
+
+write.table(lib_df, file = lib_info_out, quote = F, sep = '\t', row.names = F,
+  col.names = T)
+
+samp_file <- 'transcriptome_samp_info.txt'
+
+samp_info <- read.table(samp_file, header = T, stringsAsFactors = F, sep = '\t')
+
+setdiff(lib_df$lib_name, samp_info$LibName)
+ [1] "GCAPN" "GCAPO" "GCHOT" "GCHOU" "GCHOW" "GBCAS" "GBCAT" "GBCAU" "GBCAW"
+[10] "GBCAX"
+# These are dropped because their comparison libraries failed
+
+# add sequencing info to sample info df
+
+lib_df_2 <- lib_df[which(lib_df$lib_name %in% samp_info$LibName), ]
+
+lib_df_2_sort <- lib_df_2[order(lib_df_2$lib_name), ]
+samp_info_sort <- samp_info[order(samp_info$LibName), ]
+
+#sum(samp_info_sort$LibName == lib_df_2_sort$lib_name)
+
+combo_info <- cbind(samp_info_sort, lib_df_2_sort[, c(2:ncol(lib_df_2_sort))])
+
+combo_out <- 'lib_and_samp_info.txt'
+
+write.table(combo_info, file = combo_out, quote = F, sep = '\t', row.names = F,
+  col.names = T)
 ```
+
+
