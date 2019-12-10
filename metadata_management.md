@@ -1,12 +1,16 @@
 # Management of Metadata for Project
 
-## Get JGI sequencing info
+## Sample and JGI sequencing info
 * Tables are saved in this google Sheet
   * `https://docs.google.com/spreadsheets/d/1ARXuObWDpaJwKm2KNPXpso9qMpAfQFvml2cQ_G0fkIk/edit?usp=sharing`
+* Combined file with sample and library info:
+  * `/global/cscratch1/sd/grabowsp/CamSat_transcript/lib_and_samp_info.txt`
+* List of library names
+  * `/global/cscratch1/sd/grabowsp/CamSat_transcript/Cs_transcriptome_libs.txt`
 ### Steps
-* Manually inputted Experiment info from Chaofu's info sheet as "Sample Info"
-* Processed the JGI Library Sequencing data using R
-* Combined the Sample and Sequencing info into single table
+* Manually input Experiment info from Chaofu's info sheet as "Sample Info"
+* Process the JGI Library Sequencing data using R
+* Combine the Sample and Sequencing info into single table
   * need to upload this to NERSC
 ### Process files
 * In R
@@ -22,7 +26,7 @@ lib_2 <- unlist(strsplit(lib_info, split = 'SPLIT_HERE'))
 
 lib_list <- strsplit(lib_2, split = ' ')
 
-
+# these files have a weird blank space that needs to be removed
 mystery_char <- unlist(strsplit(lib_list[[1]][1], split = ''))[6]
 
 lib_list_2 <- lapply(lib_list, function(x) gsub(mystery_char, '', x))
@@ -71,4 +75,9 @@ write.table(combo_info, file = combo_out, quote = F, sep = '\t', row.names = F,
   col.names = T)
 ```
 
+## Generate list of libraries
+```
+cd /global/cscratch1/sd/grabowsp/CamSat_transcript
 
+cut -f 1 lib_and_samp_info.txt | tail -n +2  > Cs_transcriptome_libs.txt
+```
