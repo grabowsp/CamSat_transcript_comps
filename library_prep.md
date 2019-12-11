@@ -133,20 +133,20 @@ cd /global/cscratch1/sd/grabowsp/CamSat_transcript
 split -l 45 -d Cs_transcriptome_libs.txt Cs_transc_small_list_
 ```
 ### Submit jobs
-* have submitted: `Cs_transc_small_list_00`
+* have submitted: `Cs_transc_small_list_00`; `Cs_transc_small_list_00`
 ```
 bash
 module load python
 source activate /global/dna/projectdirs/plant/geneAtlas/HAGSC_TOOLS/ANACONDA_ENVS/PREP_ENV/
 cd /global/cscratch1/sd/grabowsp/CamSat_transcript/Cs_transc_preps
 
-for i in `cat ../Cs_transc_small_list_00`;
+for i in `cat ../Cs_transc_small_list_01`;
   do
   cd ./$i;
   python3 /global/dna/projectdirs/plant/geneAtlas/HAGSC_TOOLS/PREP_TESTING/splittingOPP.py \
 /global/cscratch1/sd/grabowsp/CamSat_transcript/Cs_transc_preps $i -q 100;
   cd ..;
-  sleep 10s;
+  sleep 5s;
   done
 ```
 
@@ -157,10 +157,10 @@ for i in `cat ../Cs_transc_small_list_00`;
 ### Check for `prepComplete` file
 ```
 cd /global/cscratch1/sd/grabowsp/CamSat_transcript/Cs_transc_preps
-for i in `cat ../Cs_transc_small_list_00`;
+for i in `cat ../Cs_transc_small_list_01`;
 do ls -oh ./$i/prepComplete; done
 ```
-* all finished for:
+* all finished for: `Cs_transc_small_list_00`;, `Cs_transc_small_list_01`
 
 
 
