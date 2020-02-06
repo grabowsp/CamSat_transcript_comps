@@ -9,4 +9,6 @@ cp /home/grabowsky/tools/workflows/rnaseq_TC_contrasts/r_scripts/DESeq2_TC_scrip
 ```
 cd /global/cscratch1/sd/grabowsp/CamSat_transcript/Cs_transc_DESeq2
 
+sbatch run_DESeq2_01.sh
+
 ``` 
