@@ -49,6 +49,7 @@ comp_treatment <- args[5]
 time_comps_in <- args[6]
 #time_comps_in <- '8DAF,12DAF'
 #time_comps <- unlist(strsplit(time_comps_in, split = ','))
+time_comps <- time_comps_in
 
 # SET CONSTANTS #
 min_floor_count_cut <- 5
