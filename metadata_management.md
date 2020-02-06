@@ -4,15 +4,22 @@
 * Tables are saved in this google Sheet
   * `https://docs.google.com/spreadsheets/d/1ARXuObWDpaJwKm2KNPXpso9qMpAfQFvml2cQ_G0fkIk/edit?usp=sharing`
 * Combined file with sample and library info:
+  * note: these two files are exactly the same but were uploaded to different
+locations (and with different names - shoot!)
   * `/global/cscratch1/sd/grabowsp/CamSat_transcript/lib_and_samp_info.txt`
+  * `/global/cscratch1/sd/grabowsp/CamSat_transcript/Cs_transc_counts/transc_comp_samp_and_lib_info.tsv`
 * List of library names
   * `/global/cscratch1/sd/grabowsp/CamSat_transcript/Cs_transcriptome_libs.txt`
+* Metadata formatted for DESeq2
+  * `/global/cscratch1/sd/grabowsp/CamSat_transcript/Cs_rnaseq_meta_for_DESeq2.txt`
+
 ### Steps
 * Manually input Experiment info from Chaofu's info sheet as "Sample Info"
 * Process the JGI Library Sequencing data using R
 * Combine the Sample and Sequencing info into single table
   * need to upload this to NERSC
-### Process files
+
+### Process files from Chaofu's sheets
 * In R
 * I did all this on my PC because Cori was down for maintenance
   * all generated tables are saved in the Google Sheet noted above
@@ -80,4 +87,28 @@ write.table(combo_info, file = combo_out, quote = F, sep = '\t', row.names = F,
 cd /global/cscratch1/sd/grabowsp/CamSat_transcript
 
 cut -f 1 lib_and_samp_info.txt | tail -n +2  > Cs_transcriptome_libs.txt
+```
+
+## Format metadata for DESeq2
+```
+meta_in <- '/global/cscratch1/sd/grabowsp/CamSat_transcript/lib_and_samp_info.txt'
+
+meta <- read.table(meta_in, header = T, stringsAsFactors = F, sep = '\t')
+
+colnames(meta)[which(colnames(meta) == 'LibName')] <- 'SampleName'
+colnames(meta)[which(colnames(meta) == 'Sample')] <- 'Treatment'
+
+meta$Time_Days <- meta$Time
+meta$Time_Days <- gsub('DAF', '', meta$Time_Days)
+meta$Time_Days[which(meta$Time_Days == '72H')] <- 3
+meta$Time_Days <- gsub('H', '', meta$Time_Days)
+meta$Time_Days <- as.numeric(meta$Time_Days)
+
+meta_2 <- meta[, c('SampleName', 'Treatment', 'Time', 'Time_Days')]
+
+meta_out <- paste('/global/cscratch1/sd/grabowsp/CamSat_transcript/', 
+  'Cs_rnaseq_meta_for_DESeq2.txt', sep = '')
+write.table(meta_2, file = meta_out, quote = F, sep = '\t', row.names = F,
+  col.names = T)
+
 ```
