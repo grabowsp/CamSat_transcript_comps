@@ -79,6 +79,7 @@ meta_time_inds <- which(samp_meta_full$Time %in% time_comps)
 
 samp_meta_2 <- samp_meta_full[
   intersect(c(control_meta_inds, comp_meta_inds), meta_time_inds), ]
+samp_meta_2$Treatment <- gsub('-', '_', samp_meta_2$Treatment)
 
 counts_1 <- counts_full[, samp_meta_2$SampleName]
 
