@@ -83,5 +83,9 @@ MT5_vs_HMT102 MT5 HMT102 15DAF
 cd /global/cscratch1/sd/grabowsp/CamSat_transcript/Cs_transc_maSigPro
 
 sbatch run_maSigPro_01.sh
+# re-run some of the comparisons using an updated r-script that corrects
+#   an error when using '-' in labels of treatments
+sbatch run_maSigPro_02.sh
+
 ```
  
