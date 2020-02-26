@@ -78,6 +78,9 @@ MT5_vs_HMT102 MT5 HMT102 15DAF
 ```
 
 ## maSigPro
+### Results Directory
+* `/global/cscratch1/sd/grabowsp/CamSat_transcript/Cs_transc_maSigPro/`
+
 ### Overview
 #### My Notes
 Fits regression including different parameters for relationship with time
@@ -121,6 +124,8 @@ sbatch run_maSigPro_01.sh
 ```
 
 ## Make combined lists
+### Results
+* `/global/cscratch1/sd/grabowsp/CamSat_transcript/Cs_transc_DE_combofiles/`
 ### Overview
 * Make lists of the genes that overlap for either "General" or "TC" in \
 DESeq2 and maSigPro results
@@ -130,4 +135,11 @@ module load python/3.7-anaconda-2019.07
 source activate R_GO_analysis
 
 Rscript /global/homes/g/grabowsp/tools/CamSat_transcript_comps/r_scripts/make_General_DE_List1.r
+```
+### Make TC Combined Lists
+```
+module load python/3.7-anaconda-2019.07
+source activate R_GO_analysis
+
+Rscript /global/homes/g/grabowsp/tools/CamSat_transcript_comps/r_scripts/make_TE_DE_List2.r
 ```
