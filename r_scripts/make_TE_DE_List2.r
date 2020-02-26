@@ -1,7 +1,7 @@
 # Script to make General DE gene lists from Camelina seed time course experiment
 #   Get overlap of DESeq2-General, maSigPro, and splineTimeR-general
 
-
+# Load 'R_GO_analysis' conda environment so all packages are available'
 
 # LOAD FILES #
 ## Information about comparisons for loading and filtering data
@@ -57,63 +57,63 @@ for(COMP_NUM in seq(nrow(comp_info))){
   comp_treatment <- comp_info$comp_treatment[COMP_NUM]
   time_comps <- unlist(strsplit(comp_info$time_comps[COMP_NUM], split = ','))
 
-  deseq_gen_file <- paste(deseq_dir, comp_name, deseq_suf, sep = '')
+  deseq_tc_file <- paste(deseq_dir, comp_name, deseq_suf, sep = '')
   # General differences between the lines
-  deseq_gen <- read.table(deseq_gen_file, header = T, stringsAsFactors = F, 
+  deseq_tc <- read.table(deseq_tc_file, header = T, stringsAsFactors = F, 
     sep = '\t')
 
-  masig_gen_file <- paste(masig_dir, comp_name, masig_suf, sep = '')
+  masig_tc_file <- paste(masig_dir, comp_name, masig_suf, sep = '')
   # General differences between the lines
-  masig_gen <- read.table(masig_gen_file, header = T, stringsAsFactors = F, 
+  masig_tc <- read.table(masig_tc_file, header = T, stringsAsFactors = F, 
     sep = '\t')
 
   # add rank columns to result files
-  deseq_gen$rank <- order(deseq_gen$padj)
-  masig_gen$rank <- order(masig_gen$p_val)
+  deseq_tc$rank <- order(deseq_tc$adj_pval)
+  masig_tc$rank <- order(masig_tc$p_val)
 
   # Generate "General" Gene list
-  gen_names <- intersect(deseq_gen$gene, masig_gen$genes)
+  tc_names <- intersect(deseq_tc$gene, masig_tc$genes)
 
   # Make file with "general" genes
-  gen_names_2 <- sort(gen_names)
-  deseq_gen_ord <- deseq_gen[order(deseq_gen$gene),]
-  masig_gen_ord <- masig_gen[order(masig_gen$genes),]
+  tc_names_2 <- sort(tc_names)
+  deseq_tc_ord <- deseq_tc[order(deseq_tc$gene),]
+  masig_tc_ord <- masig_tc[order(masig_tc$genes),]
 
   # p-values are all multiple-testing corrected
-  gen_DE_df <- data.frame(gene = gen_names_2, stringsAsFactors = F)
+  tc_DE_df <- data.frame(gene = tc_names_2, stringsAsFactors = F)
 
   # ASSIGN ARABIDOPSIS NAMES
-  gen_inds_with_at <- which(gen_DE_df$gene %in% cs_to_at$cs_gene)
-  at_to_incl_inds <- which(cs_to_at$cs_gene %in%gen_DE_df$gene)
+  tc_inds_with_at <- which(tc_DE_df$gene %in% cs_to_at$cs_gene)
+  at_to_incl_inds <- which(cs_to_at$cs_gene %in%tc_DE_df$gene)
 
-  gen_DE_df$At_gene <- NA
-  gen_DE_df$At_symbol <- NA
-  gen_DE_df$At_description <- NA
+  tc_DE_df$At_gene <- NA
+  tc_DE_df$At_symbol <- NA
+  tc_DE_df$At_description <- NA
 
-  gen_DE_df$At_gene[gen_inds_with_at] <- cs_to_at$at_short[at_to_incl_inds]
-  gen_DE_df$At_symbol[gen_inds_with_at] <- cs_to_at$at_symbol[at_to_incl_inds]
-  gen_DE_df$At_description[gen_inds_with_at] <- cs_to_at$at_descr[at_to_incl_inds]
+  tc_DE_df$At_gene[tc_inds_with_at] <- cs_to_at$at_short[at_to_incl_inds]
+  tc_DE_df$At_symbol[tc_inds_with_at] <- cs_to_at$at_symbol[at_to_incl_inds]
+  tc_DE_df$At_description[tc_inds_with_at] <- cs_to_at$at_descr[at_to_incl_inds]
 
   # ASSIGN GENE NAME, P-VALUES AND RANKS FOR EACH APPROACH
-  gen_DE_df$deseq_pval <- deseq_gen_ord$padj[which(deseq_gen_ord$gene %in% 
-    gen_DE_df$gene)]
-  gen_DE_df$deseq_rank <- deseq_gen_ord$rank[which(deseq_gen_ord$gene %in% 
-    gen_DE_df$gene)]
-  gen_DE_df$masig_pval <- masig_gen_ord$p_val[which(masig_gen_ord$genes %in% 
-    gen_DE_df$gene)]
-  gen_DE_df$masig_rank <- masig_gen_ord$rank[which(masig_gen_ord$genes %in% 
-    gen_DE_df$gene)]
+  tc_DE_df$deseq_pval <- deseq_tc_ord$adj_pval[which(deseq_tc_ord$gene %in% 
+    tc_DE_df$gene)]
+  tc_DE_df$deseq_rank <- deseq_tc_ord$rank[which(deseq_tc_ord$gene %in% 
+    tc_DE_df$gene)]
+  tc_DE_df$masig_pval <- masig_tc_ord$p_val[which(masig_tc_ord$genes %in% 
+    tc_DE_df$gene)]
+  tc_DE_df$masig_rank <- masig_tc_ord$rank[which(masig_tc_ord$genes %in% 
+    tc_DE_df$gene)]
 
   # ASSIGN GO TERMS
   geneID2GO <- readMappings(file = cs_go_file)
 
-  gen_DE_df$gene_short <- unlist(lapply(
-    strsplit(gen_DE_df$gene, split = '.', fixed = T), function(x) x[1]))
+  tc_DE_df$gene_short <- unlist(lapply(
+    strsplit(tc_DE_df$gene, split = '.', fixed = T), function(x) x[1]))
 
-  gen_DE_df$go_terms <- NA
-  for(i in seq(nrow(gen_DE_df))){
-    tmp_go_terms <- unlist(geneID2GO[gen_DE_df$gene_short[i]])
-    if(length(tmp_go_terms) > 0){gen_DE_df$go_terms[i] <- paste(tmp_go_terms, collapse = ';')}
+  tc_DE_df$go_terms <- NA
+  for(i in seq(nrow(tc_DE_df))){
+    tmp_go_terms <- unlist(geneID2GO[tc_DE_df$gene_short[i]])
+    if(length(tmp_go_terms) > 0){tc_DE_df$go_terms[i] <- paste(tmp_go_terms, collapse = ';')}
   }
 
   # ASSIGN EXPRESSION LEVELS
@@ -152,8 +152,8 @@ for(COMP_NUM in seq(nrow(comp_info))){
       samp_meta_2$Treatment[meta_ind], samp_meta_2$Time[meta_ind], sep = '_')
   }
 
-  count_inds <- which(rownames(counts_2) %in% gen_DE_df$gene)
-  gen_DE_df[, colnames(counts_2)] <- counts_2[count_inds, ]
+  count_inds <- which(rownames(counts_2) %in% tc_DE_df$gene)
+  tc_DE_df[, colnames(counts_2)] <- counts_2[count_inds, ]
 
   DE_out_file <- paste(out_dir, comp_name, out_suf, sep = '')
 
