@@ -130,11 +130,13 @@ sigs_each <- get.siggenes(tstep, rsq = 0.7, vars = 'each')
 #file_types_names <- c('DE_genes', 'DE_betas', 'DE_full_mat')
 
 out_list <- list()
-beta_tab <- sigs_groups$sig.genes[[2]]$coefficients
-pval_tab <- sigs_groups$sig.genes[[2]]$sig.pvalues
+#beta_tab <- sigs_groups$sig.genes[[2]]$coefficients
+beta_tab <- sigs_each$sig.genes[[2]]$coefficients
+#pval_tab <- sigs_groups$sig.genes[[2]]$sig.pvalues
+pval_tab <- sigs_each$sig.genes[[2]]$sig.pvalues
 # data.frame with gene names and overall p-value
 out_list[['DE_genes']] <- data.frame(genes = rownames(pval_tab), 
-                            p_val = pval_tab$'p-value', stringsAsFactors = F)
+                            p_val = pval_tab[,4], stringsAsFactors = F)
 # data.frame with betas for all variables; can try to use for clustering
 #   by behaviour across conditions
 out_list[['DE_betas']] <- data.frame(genes = rownames(beta_tab), beta_tab, 
@@ -151,11 +153,11 @@ for(df in seq(length(out_list))){
 }
 
 tc_out_list <- list()
-tc_beta_tab <- sigs_each$sig.genes[[2]]$coefficients
-tc_pval_tab <- sigs_each$sig.genes[[2]]$sig.pvalues
+tc_beta_tab <- sigs_each$sig.genes[[4]]$coefficients
+tc_pval_tab <- sigs_each$sig.genes[[4]]$sig.pvalues
 # data.frame with gene names and overall p-value
 tc_out_list[['DE_genes']] <- data.frame(genes = rownames(tc_pval_tab),  
-                            p_val = tc_pval_tab$'p-value', stringsAsFactors = F)
+                            p_val = tc_pval_tab[,6], stringsAsFactors = F)
 # data.frame with betas for all variables; can try to use for clustering
 #   by behaviour across conditions
 tc_out_list[['DE_betas']] <- data.frame(genes = rownames(tc_beta_tab), 

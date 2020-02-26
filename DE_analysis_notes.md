@@ -111,8 +111,23 @@ and beta and p-value for each parameter for the significant genes
 cd /global/cscratch1/sd/grabowsp/CamSat_transcript/Cs_transc_maSigPro
 
 sbatch run_maSigPro_01.sh
+# because of Cori queue waiting, I had to run the command during interactive
+#  session
+
+## initially ran this below, but had to re-run everything...
 # re-run some of the comparisons using an updated r-script that corrects
 #   an error when using '-' in labels of treatments
-sbatch run_maSigPro_02.sh
+#sbatch run_maSigPro_02.sh
 ```
 
+## Make combined lists
+### Overview
+* Make lists of the genes that overlap for either "General" or "TC" in \
+DESeq2 and maSigPro results
+### Make General Combined Lists
+```
+module load python/3.7-anaconda-2019.07
+source activate R_GO_analysis
+
+Rscript /global/homes/g/grabowsp/tools/CamSat_transcript_comps/r_scripts/make_General_DE_List1.r
+```
