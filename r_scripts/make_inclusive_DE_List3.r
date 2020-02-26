@@ -210,7 +210,7 @@ for(COMP_NUM in seq(nrow(comp_info))){
 
   DE_out_file <- paste(out_dir, comp_name, out_suf, sep = '')
 
-  write.table(tc_DE_df, file = DE_out_file, quote = F, sep = '\t', 
+  write.table(overall_DE_df, file = DE_out_file, quote = F, sep = '\t', 
     row.names = F, col.names = T)
 }
 
